@@ -33,8 +33,28 @@ A Blank Document opens up into which the following source code can be typed down
 ## a)To Verify the Functionality using Test Bench
 
 ## Source Code – Using Case Statement :
+```
+  module alu_32bit_case(y, a, b, f);
+  input [31:0] a;
+  input [31:0] b;
+  input [2:0] f;
+  output reg [31:0] y;
 
-(Include program here)
+  always @(*) begin
+    case(f)
+      3'b000: y = a & b;       // AND
+      3'b001: y = a | b;       // OR
+      3'b010: y = ~(a & b);    // NAND
+      3'b011: y = ~(a | b);    // NOR
+      3'b100: y = a + b;       // ADD
+      3'b101: y = a - b;       // SUB
+      3'b110: y = a * b;       // MUL
+      default: y = 32'bx;      // Undefined
+    endcase
+  end
+
+endmodule
+```
 
 Use Save option or Ctrl+S to save the code or click on the save option from the top most right corner and close the text file.
 
@@ -44,7 +64,52 @@ Similarly, create your test bench using gedit <filename_tb>.v or <filename_tb>.v
 
 ## Test Bench :
 
-(Include test bench program here)
+```
+module test_alu_32bit_case;
+
+  reg [31:0] a;
+  reg [31:0] b;
+  reg [2:0] f;
+  wire [31:0] y;
+
+  // Instantiate the ALU module
+  alu_32bit_case uut (
+    .y(y),
+    .a(a),
+    .b(b),
+    .f(f)
+  );
+
+  initial begin
+    // Test AND
+    a = 32'hAAAAAAAA; b = 32'h55555555; f = 3'b000; #10;
+    
+    // Test OR
+    a = 32'hAAAAAAAA; b = 32'h55555555; f = 3'b001; #10;
+
+    // Test NAND
+    a = 32'hFFFFFFFF; b = 32'h00000000; f = 3'b010; #10;
+
+    // Test NOR
+    a = 32'h00000000; b = 32'h00000000; f = 3'b011; #10;
+
+    // Test ADD
+    a = 32'd100; b = 32'd25; f = 3'b100; #10;
+
+    // Test SUB
+    a = 32'd100; b = 32'd25; f = 3'b101; #10;
+
+    // Test MUL
+    a = 32'd10; b = 32'd3; f = 3'b110; #10;
+
+    // Test default
+    f = 3'b111; #10;
+
+    $finish;
+  end
+
+endmodule
+```
 
 Use Save option or Ctrl+S to save the code or click on the save option from the top most right corner and close the text file.
 
@@ -61,6 +126,7 @@ source /cadence/install/cshrc (mention the path of the tools)
 After this you can see the window like below 
 
 ### Fig 2: Invoke the Cadence Environment
+![Screenshot 2025-04-23 163317](https://github.com/user-attachments/assets/d1d90ee5-16dd-4d67-9f2a-a60ef7e226cf)
 
 To Launch Simulation tool 
 
@@ -74,12 +140,16 @@ or
 It will invoke the nclaunch window for functional simulation we can compile,elaborate and simulate it using Multiple Step .
 
 ### Fig 3: Setting Multi-step simulation
+![Screenshot 2025-04-23 163336](https://github.com/user-attachments/assets/40c1085d-9318-491d-86e9-8aeb6a3b4253)
+
 
 Select Multiple Step and then select “Create cds.lib File” as shown in below figure 
 
 Click the cds.lib file and save the file by clicking on Save option 
 
 ### Fig 4:cds.lib file Creation
+![Screenshot 2025-04-23 163342](https://github.com/user-attachments/assets/48b1ea29-5619-4c8b-aed6-bceaf21e68ed)
+
 
 Save cds.lib file and select the correct option for cds.lib file format based on the HDL Language and Libraries used. 
 
@@ -93,6 +163,9 @@ A Click “OK” in the “nclaunch: Open Design Directory” window as shown in
 
 ### Fig 5: Selection of Don’t include any libraries
 
+
+
+
 A ‘NCLaunch window’ appears as shown in figure below
 
 Left side you can see the HDL files. Right side of the window has worklib and snapshots directories listed. 
@@ -102,6 +175,9 @@ Worklib is the directory where all the compiled codes are stored while Snapshot 
 To perform the function simulation, the following three steps are involved Compilation, Elaboration and Simulation. 
 
 ### Fig 6: Nclaunch Window
+
+![Screenshot 2025-04-23 163411](https://github.com/user-attachments/assets/06efb2e9-4198-4f8d-8856-0d3d91eb3128)
+
 
 ## Step 1: Compilation:
 
@@ -127,6 +203,9 @@ Worklib is the directory where all the compiled codes are stored while Snapshot 
 
 ### Fig 7: Compiled database in worklib
 
+![Screenshot 2025-04-23 164052](https://github.com/user-attachments/assets/1ead4e19-077d-4989-8f58-7cdca50b2649)
+
+
 After compilation it will come under worklib you can see in right side window
 
 Select the test bench and compile it. It will come under worklib. Under Worklib you can see the module and test-bench. 
@@ -145,6 +224,8 @@ Outputs: Elaborate database updated in mapped library if successful, generates r
 
 ## 	Steps for elaboration 
 
+
+
 – Run the elaboration command with elaborate options 
 
 1.It builds the module hierarchy
@@ -161,6 +242,9 @@ After elaboration the file will come under snapshot. Select the test bench and s
 
 ## Fig 8: Elaboration Launch Option
 
+![Screenshot 2025-04-23 163025](https://github.com/user-attachments/assets/63b637be-d24e-4233-9823-fea438c81af5)
+
+
 ## Step 3: Simulation: 
 
 – Simulate with the given test vectors over a period of time to observe the output behaviour. 
@@ -175,9 +259,13 @@ Steps for simulation – Run the simulation command with simulator options
 
 ## Fig 9: Design Browser window for simulation
 
-## Fig 10:Simulation Waveform Window
+![Screenshot 2025-04-23 164141](https://github.com/user-attachments/assets/3ceec474-a21c-41fa-8c49-39451c0d6fd1)
 
+## Fig 10:Simulation Waveform Window
+![Screenshot 2025-04-23 164203](https://github.com/user-attachments/assets/6bb3fe26-0338-4865-a122-ef6823e5ccc6)
 ## Fig 11:Simulation Waveform Window
+![Screenshot 2025-04-23 164213](https://github.com/user-attachments/assets/9e87ed99-134a-4ad3-afdb-d116e34946e2)
+
 
 ### Result
 
